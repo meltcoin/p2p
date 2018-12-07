@@ -2,24 +2,20 @@ package io.meltcoin.p2p.actions;
 
 import io.meltcoin.p2p.PeerToPeer;
 import io.meltcoin.p2p.listeners.MessageListener;
+import io.meltcoin.p2p.types.Peer;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 
 public class ReceiveAction extends Thread {
 
     private PeerToPeer peerToPeer;
     private DatagramSocket datagramSocket;
 
-    public ReceiveAction(PeerToPeer peerToPeer, Integer listenPort) {
+    public ReceiveAction(PeerToPeer peerToPeer) {
         this.peerToPeer = peerToPeer;
-        try {
-            this.datagramSocket = new DatagramSocket(listenPort);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+        this.datagramSocket = peerToPeer.datagramSocket;
     }
 
     @Override
@@ -34,8 +30,10 @@ public class ReceiveAction extends Thread {
                 if (receivedData.contains(":")) {
                     String[] splitMessage = receivedData.split(":");
                     if (splitMessage.length == 2) {
+                        String address = packet.getAddress().toString().replaceAll("/", "");
+                        Peer fromPeer = new Peer(peerToPeer, address, packet.getPort());
                         for (MessageListener messageListener : peerToPeer.messageListeners) {
-                            messageListener.onMessage(splitMessage[0], splitMessage[1]);
+                            messageListener.onMessage(fromPeer, splitMessage[0], splitMessage[1]);
                         }
                     }
                 }

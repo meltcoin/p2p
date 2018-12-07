@@ -6,20 +6,15 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 
 public class SendAction {
 
     private PeerToPeer peerToPeer;
-    private DatagramSocket datagramSocket = null;
+    private DatagramSocket datagramSocket;
 
     public SendAction(PeerToPeer peerToPeer) {
         this.peerToPeer = peerToPeer;
-        try {
-            this.datagramSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+        this.datagramSocket = peerToPeer.datagramSocket;
     }
 
     public void sendMessage(String type, String message, String host, Integer port) {

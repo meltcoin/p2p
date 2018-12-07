@@ -17,4 +17,12 @@ public class Peer {
     public void sendMessage(Message message) {
         peerToPeer.sendAction.sendMessage(message.getType(), message.getMessage(), host, port);
     }
+
+    public String getHost() {
+        return host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
 }
