@@ -11,9 +11,11 @@ repositories {
 }
 
 dependencies {
-     compile 'com.github.meltcoin:p2p:v1.0.0a1'
+     compile 'com.github.meltcoin:p2p:VERSION'
 }
 ```
+* Replace VERSION with the version tag on the Github release (ex. ``v1.0.0a1``) or you can
+use ``master-SNAPSHOT`` for the latest development build.
 
 ## Example Usage
 Check the ``io.meltcoin.p2p.examples`` package for examples on the usage of this library.

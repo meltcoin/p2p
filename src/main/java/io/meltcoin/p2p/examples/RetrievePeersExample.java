@@ -9,10 +9,11 @@ import java.util.HashMap;
 
 public class RetrievePeersExample implements MessageListener {
 
+    public static PeerToPeer peerToPeer = null;
     public static HashMap<String, Peer> peers = new HashMap<>();
 
     public static void main(String[] args) {
-        PeerToPeer peerToPeer = new PeerToPeer(8342);
+        peerToPeer = new PeerToPeer(8342);
         peerToPeer.start();
         peerToPeer.registerMessageListener(new RetrievePeersExample());
 
@@ -29,12 +30,24 @@ public class RetrievePeersExample implements MessageListener {
         if (type.equalsIgnoreCase("requestpeers")) {
             System.out.println("Request for peers received.");
             for (Peer peer1 : peers.values()) {
-                peer.sendMessage(new Message("peer", peer1.getHost() + ":" + peer1.getPort()));
+                peer.sendMessage(new Message("addpeer", peer1.getHost() + ":" + peer1.getPort()));
             }
         } else if (type.equalsIgnoreCase("addpeer")) {
             System.out.println("Add peer received from " + peer.getHost() + ":" + peer.getPort());
+            // Add peer that sent message
             if (!peers.containsKey(peer.getHost() + ":" + peer.getPort())) {
                 peers.put(peer.getHost() + ":" + peer.getPort(), peer);
+                System.out.println("Added the peer " + peer.getHost() + ":" + peer.getPort());
+            }
+            // Add specified peer
+            if (message.contains(":")) {
+                String[] splitMessage = message.split(":");
+                if (splitMessage.length == 2) {
+                    if (!peers.containsKey(splitMessage[0] + ":" + splitMessage[1])) {
+                        peers.put(splitMessage[0] + ":" + splitMessage[1], new Peer(peerToPeer, splitMessage[0], Integer.getInteger(splitMessage[1])));
+                        System.out.println("Added the peer " + splitMessage[0] + ":" + splitMessage[1]);
+                    }
+                }
             }
         } else if (type.equalsIgnoreCase("test")) {
             System.out.println("Test message received from " + peer.getHost() + ":" + peer.getPort());
