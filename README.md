@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-     implementation 'com.github.meltcoin:p2p:v1.0.0a1'
+     compile 'com.github.meltcoin:p2p:v1.0.0a1'
 }
 ```
 
