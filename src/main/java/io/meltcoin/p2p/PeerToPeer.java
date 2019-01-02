@@ -14,6 +14,7 @@ public class PeerToPeer {
 
     public Integer listenPort;
     public String splitString;
+    public Integer packetSize;
 
     public ArrayList<MessageListener> messageListeners;
     public DatagramSocket datagramSocket = null;
@@ -26,8 +27,16 @@ public class PeerToPeer {
     }
 
     public PeerToPeer(Integer listenPort, String splitString) {
+        this(listenPort, splitString, 1024);
+    }
+
+    public PeerToPeer(Integer listenPort, String splitString, Integer packetSize) {
+        if (splitString == null) {
+            splitString = "@#$&";
+        }
         this.listenPort = listenPort;
         this.splitString = splitString;
+        this.packetSize = packetSize;
         this.messageListeners = new ArrayList<>();
     }
 

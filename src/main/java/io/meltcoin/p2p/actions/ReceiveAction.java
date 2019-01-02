@@ -21,7 +21,7 @@ public class ReceiveAction extends Thread {
 
     @Override
     public void run() {
-        DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
+        DatagramPacket packet = new DatagramPacket(new byte[peerToPeer.packetSize], peerToPeer.packetSize);
         String receivedData;
         while (true) {
             try {
