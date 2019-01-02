@@ -13,6 +13,8 @@ import java.util.ArrayList;
 public class PeerToPeer {
 
     public Integer listenPort;
+    public String splitString;
+
     public ArrayList<MessageListener> messageListeners;
     public DatagramSocket datagramSocket = null;
 
@@ -20,7 +22,12 @@ public class PeerToPeer {
     public SendAction sendAction = null;
 
     public PeerToPeer(Integer listenPort) {
+        this(listenPort, "@#$&");
+    }
+
+    public PeerToPeer(Integer listenPort, String splitString) {
         this.listenPort = listenPort;
+        this.splitString = splitString;
         this.messageListeners = new ArrayList<>();
     }
 

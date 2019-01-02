@@ -3,6 +3,7 @@ package io.meltcoin.p2p.actions;
 import io.meltcoin.p2p.PeerToPeer;
 import io.meltcoin.p2p.listeners.MessageListener;
 import io.meltcoin.p2p.types.Peer;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -27,8 +28,8 @@ public class ReceiveAction extends Thread {
                 datagramSocket.receive(packet);
                 receivedData = new String(packet.getData());
                 //System.out.println("Received data: " + receivedData);
-                if (receivedData.contains(":")) {
-                    String[] splitMessage = receivedData.split(":");
+                if (receivedData.contains(peerToPeer.splitString)) {
+                    String[] splitMessage = StringUtils.split(receivedData, peerToPeer.splitString);
                     if (splitMessage.length == 2) {
                         String address = packet.getAddress().toString().replaceAll("/", "");
                         Peer fromPeer = new Peer(peerToPeer, address, packet.getPort());

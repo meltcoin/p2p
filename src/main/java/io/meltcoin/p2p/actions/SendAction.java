@@ -18,7 +18,7 @@ public class SendAction {
 
     public boolean sendMessage(String type, String message, String host, Integer port) {
         // Generate message to send
-        byte finalMessage[] = (type + ":" + message).getBytes();
+        byte finalMessage[] = (type + peerToPeer.splitString + message).getBytes();
         try {
             // Send packet after creation
             DatagramPacket packet = new DatagramPacket(finalMessage, finalMessage.length, InetAddress.getByName(host), port);
@@ -33,11 +33,11 @@ public class SendAction {
 
     public boolean sendMessageDebug(String type, String message, String host, Integer port) {
         // Generate message to send
-        byte finalMessage[] = (type + ":" + message).getBytes();
+        byte finalMessage[] = (type + peerToPeer.splitString + message).getBytes();
         try {
             // Send packet after creation
             DatagramPacket packet = new DatagramPacket(finalMessage, finalMessage.length, InetAddress.getByName(host), port);
-            //System.out.println("Sending data: " + new String(packet.getData()));
+            System.out.println("Sending data: " + new String(packet.getData()));
             datagramSocket.send(packet);
             return true;
         } catch (Exception e) {
