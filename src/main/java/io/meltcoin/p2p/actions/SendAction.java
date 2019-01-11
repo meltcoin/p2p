@@ -1,6 +1,9 @@
 package io.meltcoin.p2p.actions;
 
 import io.meltcoin.p2p.PeerToPeer;
+import io.meltcoin.p2p.types.Middleware;
+import io.meltcoin.p2p.types.MiddlewareResponse;
+import io.meltcoin.p2p.types.Peer;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,8 +20,13 @@ public class SendAction {
     }
 
     public boolean sendMessage(String type, String message, String host, Integer port) {
+        // Run middleware
+        MiddlewareResponse middlewareResponse = new MiddlewareResponse(new Peer(peerToPeer, host, port), type + peerToPeer.splitString + message);
+        for (Middleware middleware : peerToPeer.sendMiddlewares) {
+            middlewareResponse = middleware.onMessage(middlewareResponse);
+        }
         // Generate message to send
-        byte finalMessage[] = (type + peerToPeer.splitString + message).getBytes();
+        byte finalMessage[] = (middlewareResponse).getMessage().getBytes();
         try {
             // Send packet after creation
             DatagramPacket packet = new DatagramPacket(finalMessage, finalMessage.length, InetAddress.getByName(host), port);
@@ -32,8 +40,13 @@ public class SendAction {
     }
 
     public boolean sendMessageDebug(String type, String message, String host, Integer port) {
+        // Run middleware
+        MiddlewareResponse middlewareResponse = new MiddlewareResponse(new Peer(peerToPeer, host, port), type + peerToPeer.splitString + message);
+        for (Middleware middleware : peerToPeer.sendMiddlewares) {
+            middlewareResponse = middleware.onMessage(middlewareResponse);
+        }
         // Generate message to send
-        byte finalMessage[] = (type + peerToPeer.splitString + message).getBytes();
+        byte finalMessage[] = (middlewareResponse).getMessage().getBytes();
         try {
             // Send packet after creation
             DatagramPacket packet = new DatagramPacket(finalMessage, finalMessage.length, InetAddress.getByName(host), port);

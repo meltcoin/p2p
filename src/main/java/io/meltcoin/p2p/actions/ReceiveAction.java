@@ -2,6 +2,8 @@ package io.meltcoin.p2p.actions;
 
 import io.meltcoin.p2p.PeerToPeer;
 import io.meltcoin.p2p.listeners.MessageListener;
+import io.meltcoin.p2p.types.Middleware;
+import io.meltcoin.p2p.types.MiddlewareResponse;
 import io.meltcoin.p2p.types.Peer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,13 +30,19 @@ public class ReceiveAction extends Thread {
                 datagramSocket.receive(packet);
                 receivedData = new String(packet.getData());
                 //System.out.println("Received data: " + receivedData);
-                if (receivedData.contains(peerToPeer.splitString)) {
-                    String[] splitMessage = StringUtils.split(receivedData, peerToPeer.splitString);
+                if (packet.getAddress().toString() == null) {
+                    return;
+                }
+                Peer middlewarePeer = new Peer(peerToPeer, packet.getAddress().toString().replaceAll("/", ""), packet.getPort());
+                MiddlewareResponse middlewareResponse = new MiddlewareResponse(middlewarePeer, receivedData);
+                for (Middleware middleware : peerToPeer.recieveMiddlewares) {
+                    middlewareResponse = middleware.onMessage(middlewareResponse);
+                }
+                if (middlewareResponse.getMessage().contains(peerToPeer.splitString)) {
+                    String[] splitMessage = StringUtils.split(middlewareResponse.getMessage(), peerToPeer.splitString);
                     if (splitMessage.length == 2) {
-                        String address = packet.getAddress().toString().replaceAll("/", "");
-                        Peer fromPeer = new Peer(peerToPeer, address, packet.getPort());
                         for (MessageListener messageListener : peerToPeer.messageListeners) {
-                            messageListener.onMessage(fromPeer, splitMessage[0], splitMessage[1]);
+                            messageListener.onMessage(middlewareResponse.getPeer(), splitMessage[0], splitMessage[1]);
                         }
                     }
                 }

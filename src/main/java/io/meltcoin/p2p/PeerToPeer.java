@@ -4,6 +4,7 @@ import io.meltcoin.p2p.actions.ReceiveAction;
 import io.meltcoin.p2p.actions.SendAction;
 import io.meltcoin.p2p.listeners.MessageListener;
 import io.meltcoin.p2p.types.Message;
+import io.meltcoin.p2p.types.Middleware;
 import io.meltcoin.p2p.types.Peer;
 
 import java.net.DatagramSocket;
@@ -17,6 +18,10 @@ public class PeerToPeer {
     public Integer packetSize;
 
     public ArrayList<MessageListener> messageListeners;
+
+    public ArrayList<Middleware> recieveMiddlewares;
+    public ArrayList<Middleware> sendMiddlewares;
+
     public DatagramSocket datagramSocket = null;
 
     public ReceiveAction receiveAction = null;
@@ -38,6 +43,8 @@ public class PeerToPeer {
         this.splitString = splitString;
         this.packetSize = packetSize;
         this.messageListeners = new ArrayList<>();
+        this.recieveMiddlewares = new ArrayList<>();
+        this.sendMiddlewares = new ArrayList<>();
     }
 
     public void start() {
